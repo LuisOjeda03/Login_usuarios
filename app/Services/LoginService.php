@@ -58,7 +58,7 @@ class LoginService{
 
     public function iniciarSesion(string $correo, string $nip){
         $usuario = $this->encontrarUsuario($correo);
-        if(!$usuario) return "Correo o contraseña incorrectos";
+        if(!$usuario) return "Correo o contraseña incorrectos.";
 
         $fechaActual = new DateTime();
         $usuario->setUltimoIntento($fechaActual);
@@ -79,10 +79,13 @@ class LoginService{
                 $usuario->reiniciarIntentosLogin();
             }
             $this->actualizarSesion($usuario);
-            return "Correo o contraseña incorrectos";
+            return "Correo o contraseña incorrectos.";
         }
         
-        if($usuario->isSesionActiva()) return "Advertencia: Ya hay una sesión activa para esta cuenta";
+        if($usuario->isSesionActiva()) {
+            $this->loginRepository->rollbackTransaction();
+            return "Advertencia: Ya hay una sesión activa para esta cuenta";
+        }
         
         $usuario->iniciarSesion();
         $usuario->reiniciarIntentosLogin();
