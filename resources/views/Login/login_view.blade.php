@@ -3,10 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Inicio de Sesión</title>
-  <link 
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
-    rel="stylesheet">
+  <title>Iniciar Sesión</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="d-flex justify-content-center align-items-center vh-100 bg-light">
 
@@ -21,15 +19,25 @@
       <div class="alert alert-danger">{{ session('error') }}</div>
     @endif
 
-    <form method="POST" action="{{ route('login_inicioSesion') }}">                  
+    @if ($errors->any())
+      <div class="alert alert-danger">
+        <ul class="mb-0">
+          @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+          @endforeach
+        </ul>
+      </div>
+    @endif
+
+    <form method="POST" action="{{ route('login_inicioSesion') }}">
       @csrf
       <div class="mb-3">
         <label for="correo" class="form-label">Correo</label>
-        <input type="text" class="form-control" id="correo" name="correo" placeholder="Ingresa tu Correo" required>
+        <input type="text" class="form-control" id="correo" name="correo" value="{{ old('correo') }}" placeholder="Ingresa tu correo" required>
       </div>
       <div class="mb-3">
         <label for="nip" class="form-label">Nip</label>
-        <input type="password" class="form-control" id="nip" name="nip" placeholder="Ingresa tu Nip" required>
+        <input type="password" class="form-control" id="nip" name="nip" placeholder="Ingresa tu nip" required>
       </div>
       <div class="d-grid">
         <button type="submit" class="btn btn-primary">Iniciar sesión</button>

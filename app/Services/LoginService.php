@@ -74,7 +74,7 @@ class LoginService{
 
             if($usuario->getIntentosLogin() > 3){
                 $ultimoIntento = $usuario->getUltimoIntento();
-                $nuevoBloqueo = (clone $ultimoIntento)->modify('+1 minutes');    
+                $nuevoBloqueo = (clone $ultimoIntento)->modify('+30 minutes');    
                 $usuario->setBloqueadoHasta($nuevoBloqueo);
                 $usuario->reiniciarIntentosLogin();
             }
