@@ -7,53 +7,53 @@ use DateTime;
 
 class LoginService{
     
-    private $LoginRepository;
+    private $loginRepository;
 
-    public function __construct(LoginRepository $LoginRepository){
-        $this->LoginRepository = $LoginRepository;
+    public function __construct(LoginRepository $loginRepository){
+        $this->loginRepository = $loginRepository;
     }
 
     public function encontrarUsuario($correo){
-        $this->LoginRepository->beginTransaction();
+        $this->loginRepository->beginTransaction();
 
-        $usuarioEncontrado = $this->LoginRepository->buscarUsuarioPorCorreo($correo);
-        if(!$usuarioEncontrado) return null;
+        $usuario = $this->loginRepository->buscarUsuarioPorCorreo($correo);
+        if(!$usuario) return null;
 
         return new Usuario(
-            $usuarioEncontrado->id,
-            $usuarioEncontrado->correo,
-            $usuarioEncontrado->nip,
-            $usuarioEncontrado->nombre,
-            $usuarioEncontrado->apellido,
-            (bool) $usuarioEncontrado->sesion_activa,
-            (int) $usuarioEncontrado->intentos_login,
-            $usuarioEncontrado->ultimo_intento ? new DateTime($usuarioEncontrado->ultimo_intento) : null,
-            $usuarioEncontrado->bloqueado_hasta ? new DateTime($usuarioEncontrado->bloqueado_hasta) : null
+            $usuario->id,
+            $usuario->correo,
+            $usuario->nip,
+            $usuario->nombre,
+            $usuario->apellido,
+            (bool) $usuario->sesion_activa,
+            (int) $usuario->intentos_login,
+            $usuario->ultimo_intento ? new DateTime($usuario->ultimo_intento) : null,
+            $usuario->bloqueado_hasta ? new DateTime($usuario->bloqueado_hasta) : null
         );
     }
 
     public function crearUsuario($correo, $nip, $nombre, $apellido){
         $existe = $this->encontrarUsuario($correo);
         if($existe) {
-            $this->LoginRepository->rollbackTransaction();
+            $this->loginRepository->rollbackTransaction();
             return "Advertencia: El correo ya se encuentra registrado";
         }
 
         $nipHash = Hash::make($nip);
 
-        $usuario = $this->LoginRepository->crearUsuario($correo, $nipHash, $nombre, $apellido);
+        $usuario = $this->loginRepository->crearUsuario($correo, $nipHash, $nombre, $apellido);
         if(!$usuario) {
-            $this->LoginRepository->rollbackTransaction();
+            $this->loginRepository->rollbackTransaction();
             return "Advertencia: No se ha podido crear el usuario";
         }
 
-        $this->LoginRepository->commitTransaction();
+        $this->loginRepository->commitTransaction();
         return 1;
     }
 
     public function actualizarSesion(Usuario $usuario){
-        $this->LoginRepository->actualizarStatusUsuario($usuario);
-        $this->LoginRepository->commitTransaction();
+        $this->loginRepository->actualizarStatusUsuario($usuario);
+        $this->loginRepository->commitTransaction();
     }
 
     public function iniciarSesion(string $correo, string $nip){
@@ -74,7 +74,7 @@ class LoginService{
 
             if($usuario->getIntentosLogin() > 3){
                 $ultimoIntento = $usuario->getUltimoIntento();
-                $nuevoBloqueo = (clone $ultimoIntento)->modify('+1 minutes');  // CAMBIAR A 30     
+                $nuevoBloqueo = (clone $ultimoIntento)->modify('+1 minutes');    
                 $usuario->setBloqueadoHasta($nuevoBloqueo);
                 $usuario->reiniciarIntentosLogin();
             }
@@ -84,7 +84,7 @@ class LoginService{
         
         if($usuario->isSesionActiva()) return "Advertencia: Ya hay una sesión activa para esta cuenta";
         
-        $usuario->iniciarSesion();  // entonces hacer los set private?
+        $usuario->iniciarSesion();
         $usuario->reiniciarIntentosLogin();
         
        $this->actualizarSesion($usuario);

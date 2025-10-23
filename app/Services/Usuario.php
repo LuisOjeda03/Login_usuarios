@@ -4,16 +4,17 @@ namespace App\Services;
 
 use DateTime;
 
-class Usuario{
+class Usuario
+{
     private int $id;
     private string $correo;
     private string $nip;
     private string $nombre;
     private string $apellido;
-    private bool $sesion_activa;
-    private int $intentos_login;
-    private ?DateTime $ultimo_intento;
-    private ?DateTime $bloqueado_hasta;
+    private bool $sesionActiva;
+    private int $intentosLogin;
+    private ?DateTime $ultimoIntento;
+    private ?DateTime $bloqueadoHasta;
 
     public function __construct(
         int $id,
@@ -21,20 +22,20 @@ class Usuario{
         string $nip,
         string $nombre,
         string $apellido,
-        bool $sesion_activa = false,
-        int $intentos_login = 0,
-        ?DateTime $ultimo_intento = null,
-        ?DateTime $bloqueado_hasta = null
+        bool $sesionActiva = false,
+        int $intentosLogin = 0,
+        ?DateTime $ultimoIntento = null,
+        ?DateTime $bloqueadoHasta = null
     ) {
         $this->id = $id;
         $this->correo = $correo;
         $this->nip = $nip;
         $this->nombre = $nombre;
         $this->apellido = $apellido;
-        $this->sesion_activa = $sesion_activa;
-        $this->intentos_login = $intentos_login;
-        $this->ultimo_intento = $ultimo_intento;
-        $this->bloqueado_hasta = $bloqueado_hasta;
+        $this->sesionActiva = $sesionActiva;
+        $this->intentosLogin = $intentosLogin;
+        $this->ultimoIntento = $ultimoIntento;
+        $this->bloqueadoHasta = $bloqueadoHasta;
     }
 
     public function getId(): int
@@ -64,22 +65,22 @@ class Usuario{
 
     public function isSesionActiva(): bool
     {
-        return $this->sesion_activa;
+        return $this->sesionActiva;
     }
 
     public function getIntentosLogin(): int
     {
-        return $this->intentos_login;
+        return $this->intentosLogin;
     }
 
     public function getUltimoIntento(): ?DateTime
     {
-        return $this->ultimo_intento;
+        return $this->ultimoIntento;
     }
 
     public function getBloqueadoHasta(): ?DateTime
     {
-        return $this->bloqueado_hasta;
+        return $this->bloqueadoHasta;
     }
 
     public function setCorreo(string $correo): void
@@ -102,39 +103,43 @@ class Usuario{
         $this->apellido = $apellido;
     }
 
-    public function setSesionActiva(bool $sesion_activa): void
+    public function setSesionActiva(bool $sesionActiva): void
     {
-        $this->sesion_activa = $sesion_activa;
+        $this->sesionActiva = $sesionActiva;
     }
 
-    public function setIntentosLogin(int $intentos_login): void
+    public function setIntentosLogin(int $intentosLogin): void
     {
-        $this->intentos_login = $intentos_login;
+        $this->intentosLogin = $intentosLogin;
     }
 
-    public function setUltimoIntento(?DateTime $ultimo_intento): void
+    public function setUltimoIntento(?DateTime $ultimoIntento): void
     {
-        $this->ultimo_intento = $ultimo_intento;
+        $this->ultimoIntento = $ultimoIntento;
     }
 
-    public function setBloqueadoHasta(?DateTime $bloqueado_hasta): void
+    public function setBloqueadoHasta(?DateTime $bloqueadoHasta): void
     {
-        $this->bloqueado_hasta = $bloqueado_hasta;
+        $this->bloqueadoHasta = $bloqueadoHasta;
     }
 
-    public function aumentarIntentosLogin(){
-        $this->intentos_login++;
+    public function aumentarIntentosLogin(): void
+    {
+        $this->intentosLogin++;
     }
 
-    public function reiniciarIntentosLogin(){
-        $this->intentos_login = 0;
+    public function reiniciarIntentosLogin(): void
+    {
+        $this->intentosLogin = 0;
     }
 
-    public function iniciarSesion(){
+    public function iniciarSesion(): void
+    {
         $this->setSesionActiva(true);
     }
 
-    public function cerrarSesion(){
+    public function cerrarSesion(): void
+    {
         $this->setSesionActiva(false);
     }
 }
