@@ -26,7 +26,6 @@ class LoginController extends Controller{
     }
 
     public function login_inicioSesion(Request $request){
-        // Recuperar los datos del formulario
         $correo = $request->input('correo');
         $nip = $request->input('nip');
 
@@ -47,6 +46,7 @@ class LoginController extends Controller{
         $usuarioSession = session('usuario');
         $correo = $usuarioSession['correo'];
         $this->loginService->cerrarSesion($correo);
+        session()->flush();
         return redirect()->route('login_home');
     }
 
