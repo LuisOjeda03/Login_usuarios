@@ -1,9 +1,6 @@
 <?php
-
 namespace App\Services;
-
 use DateTime;
-
 class Usuario
 {
     private int $id;
