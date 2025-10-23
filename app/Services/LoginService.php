@@ -16,7 +16,7 @@ class LoginService{
     public function encontrarUsuario($correo){
         $this->LoginRepository->beginTransaction();
 
-        $usuarioEncontrado = $this->LoginRepository->buscarUsuarioCorreo($correo);
+        $usuarioEncontrado = $this->LoginRepository->buscarUsuarioPorCorreo($correo);
         if(!$usuarioEncontrado) return null;
 
         return new Usuario(
@@ -36,7 +36,7 @@ class LoginService{
         $existe = $this->encontrarUsuario($correo);
         if($existe) {
             $this->LoginRepository->rollbackTransaction();
-            return "Advertencia: El correo ya encuentra registrado";
+            return "Advertencia: El correo ya se encuentra registrado";
         }
 
         $nipHash = Hash::make($nip);
@@ -60,8 +60,8 @@ class LoginService{
         $usuario = $this->encontrarUsuario($correo);
         if(!$usuario) return "Correo o contraseña incorrectos";
 
-        $ahora = new DateTime();
-        $usuario->setUltimoIntento($ahora);
+        $fechaActual = new DateTime();
+        $usuario->setUltimoIntento($fechaActual);
         $bloqueadoHasta = $usuario->getBloqueadoHasta();
         if($bloqueadoHasta && $bloqueadoHasta > $usuario->getUltimoIntento()){
             $this->actualizarSesion($usuario);
@@ -73,13 +73,15 @@ class LoginService{
             $usuario->aumentarIntentosLogin();
 
             if($usuario->getIntentosLogin() > 3){
-                $nuevoBloqueo = ($usuario->getUltimoIntento())->modify('+1 minutes');  // CAMBIAR A 30     
+                $ultimoIntento = $usuario->getUltimoIntento();
+                $nuevoBloqueo = (clone $ultimoIntento)->modify('+1 minutes');  // CAMBIAR A 30     
                 $usuario->setBloqueadoHasta($nuevoBloqueo);
+                $usuario->reiniciarIntentosLogin();
             }
             $this->actualizarSesion($usuario);
             return "Correo o contraseña incorrectos";
         }
-
+        
         if($usuario->isSesionActiva()) return "Advertencia: Ya hay una sesión activa para esta cuenta";
         
         $usuario->iniciarSesion();  // entonces hacer los set private?

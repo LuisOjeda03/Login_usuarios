@@ -36,7 +36,7 @@ class LoginRepository{
         }
     }
 
-    public function buscarUsuarioCorreo(string $correo){
+    public function buscarUsuarioPorCorreo(string $correo){
         try{
             return UsuarioModel::where('correo', $correo)
             ->lockForUpdate()

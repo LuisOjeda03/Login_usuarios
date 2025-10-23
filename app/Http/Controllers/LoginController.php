@@ -8,10 +8,6 @@ use App\Services\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-
-// use Illuminate\Support\Facades\Hash; // BORRAR
-
-
 class LoginController extends Controller{
 
     private $loginService;

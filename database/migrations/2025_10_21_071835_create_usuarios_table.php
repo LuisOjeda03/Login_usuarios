@@ -12,7 +12,7 @@ return new class extends Migration
         Schema::create('usuarios', function (Blueprint $table) {
             $table->id();
             $table->string('correo',255)->unique();
-            $table->string('nip',255);
+            $table->string('nip',100);
             $table->string('nombre',50);
             $table->string('apellido',50);
             $table->boolean('sesion_activa')->default(false);
