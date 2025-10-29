@@ -72,7 +72,7 @@ class LoginService{
         if (!Hash::check($nip, $usuario->getNip())) {
             $usuario->aumentarIntentosLogin();
 
-            if($usuario->getIntentosLogin() > 3){
+            if($usuario->getIntentosLogin() >= 3){
                 $ultimoIntento = $usuario->getUltimoIntento();
                 $nuevoBloqueo = (clone $ultimoIntento)->modify('+30 minutes');    
                 $usuario->setBloqueadoHasta($nuevoBloqueo);
