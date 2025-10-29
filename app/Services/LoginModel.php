@@ -6,7 +6,7 @@ use App\Repositories\LoginRepository;
 use Illuminate\Support\Facades\Hash;
 use DateTime;
 
-class LoginService
+class LoginModel
 {
 
     private $loginRepository;

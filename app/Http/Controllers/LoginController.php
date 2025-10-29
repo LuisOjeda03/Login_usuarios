@@ -3,18 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Services\LoginService;
+use App\Services\LoginModel;
 use App\Services\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class LoginController extends Controller
 {
-    private $loginService;
+    private $loginModel;
 
-    public function __construct(LoginService $loginService)
+    public function __construct(LoginModel $loginModel)
     {
-        $this->loginService = $loginService;
+        $this->loginModel = $loginModel;
     }
 
     public function login_home()
@@ -26,12 +26,11 @@ class LoginController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'correo' => ['required', 'string', 'regex:/^[\w\.-]+@[\w\.-]+\.\w{2,4}$/'],
-            'nip' => ['required', 'string', 'min:6']
+            'nip' => ['required', 'string']
         ], [
             'correo.required' => 'El correo es obligatorio.',
             'correo.regex' => 'El correo no tiene un formato válido.',
             'nip.required' => 'El nip es obligatorio.',
-            'nip.min' => 'El nip debe tener al menos 6 caracteres.'
         ]);
 
         if ($validator->fails()) {
@@ -41,7 +40,7 @@ class LoginController extends Controller
         $correo = $request->input('correo');
         $nip = $request->input('nip');
 
-        $usuario = $this->loginService->iniciarSesion($correo, $nip);
+        $usuario = $this->loginModel->iniciarSesion($correo, $nip);
         if (!$usuario) return back()->with('error', "Ha ocurrido un error");
 
         if (!$usuario instanceof Usuario) return back()->with('error', $usuario);
@@ -60,7 +59,7 @@ class LoginController extends Controller
         $correo = $usuarioSession['correo'] ?? null;
 
         if ($correo) {
-            $this->loginService->cerrarSesion($correo);
+            $this->loginModel->cerrarSesion($correo);
         }
 
         session()->flush();
@@ -76,14 +75,13 @@ class LoginController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'correo' => ['required', 'string', 'regex:/^[\w\.-]+@[\w\.-]+\.\w{2,4}$/'],
-            'nip' => ['required', 'string', 'min:6', 'regex:/^(?=.[a-z])(?=.[A-Z])(?=.\d)(?=.[\W_]).+$/'],
+            'nip' => ['required', 'string','regex:/^(?=.[a-z])(?=.[A-Z])(?=.\d)(?=.[\W_]).+$/'],
             'nombre' => ['required', 'string', 'max:255', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/'],
             'apellido' => ['required', 'string', 'max:255', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/']
         ], [
             'correo.required' => 'El correo es obligatorio.',
             'correo.regex' => 'El correo no tiene un formato válido.',
             'nip.required' => 'El nip es obligatorio.',
-            'nip.min' => 'El nip debe tener al menos 6 caracteres.',
             'nip.regex' => 'El nip debe contener al menos una minúscula, una mayúscula, un número y un carácter especial.',
             'nombre.required' => 'El nombre es requerido.',
             'nombre.regex' => 'El nombre solo puede contener letras.',
@@ -100,7 +98,7 @@ class LoginController extends Controller
         $apellido = $request->input('apellido');
         $nip = $request->input('nip');
 
-        $resultado = $this->loginService->crearUsuario($correo, $nip, $nombre, $apellido);
+        $resultado = $this->loginModel->crearUsuario($correo, $nip, $nombre, $apellido);
 
         if ($resultado != 1) {
             return back()->with('error', $resultado)->withInput();
