@@ -25,10 +25,10 @@ class LoginController extends Controller
     public function login_inicioSesion(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'correo' => ['required', 'email', 'regex:/^[\w\.-]+@[\w\.-]+\.\w{2,4}$/'],
+            'correo' => ['required', 'string', 'regex:/^[\w\.-]+@[\w\.-]+\.\w{2,4}$/'],
             'nip' => ['required', 'string', 'min:6']
         ], [
-            'correo.email' => 'El correo debe ser una dirección de correo válida.',
+            'correo.required' => 'El correo es obligatorio.',
             'correo.regex' => 'El correo no tiene un formato válido.',
             'nip.required' => 'El nip es obligatorio.',
             'nip.min' => 'El nip debe tener al menos 6 caracteres.'
@@ -75,18 +75,20 @@ class LoginController extends Controller
     public function registro_crearCuenta(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'correo' => ['required', 'email', 'regex:/^[\w\.-]+@[\w\.-]+\.\w{2,4}$/'],
-            'nip' => ['required', 'string', 'min:6', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/'],
-            'nombre' => 'required|string|max:255',
-            'apellido' => 'required|string|max:255'
+            'correo' => ['required', 'string', 'regex:/^[\w\.-]+@[\w\.-]+\.\w{2,4}$/'],
+            'nip' => ['required', 'string', 'min:6', 'regex:/^(?=.[a-z])(?=.[A-Z])(?=.\d)(?=.[\W_]).+$/'],
+            'nombre' => ['required', 'string', 'max:255', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/'],
+            'apellido' => ['required', 'string', 'max:255', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/']
         ], [
-            'correo.email' => 'El correo debe ser una dirección de correo válida.',
+            'correo.required' => 'El correo es obligatorio.',
             'correo.regex' => 'El correo no tiene un formato válido.',
             'nip.required' => 'El nip es obligatorio.',
             'nip.min' => 'El nip debe tener al menos 6 caracteres.',
             'nip.regex' => 'El nip debe contener al menos una minúscula, una mayúscula, un número y un carácter especial.',
             'nombre.required' => 'El nombre es requerido.',
-            'apellido.required' => 'El apellido es requerido.'
+            'nombre.regex' => 'El nombre solo puede contener letras.',
+            'apellido.required' => 'El apellido es requerido.',
+            'apellido.regex' => 'El apellido solo puede contener letras.'
         ]);
 
         if ($validator->fails()) {
